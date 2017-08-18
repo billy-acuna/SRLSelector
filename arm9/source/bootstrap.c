@@ -27,26 +27,26 @@
 
 #include "nds_loader_arm9.h"
 
-int file_exists(char const* path){
+int file_exists(char const* path) {
 	struct stat st;
 	if(stat(path, &st) == 0)
 		return 1; // File exists
 	return 0;
 }
 
-void panic()
+void panic() {
 	const char* defnds = "/SRLSELECTOR/DEFAULT.NDS";
 	if(file_exists(defnds)
 		runNdsFile(defnds, 0, NULL);
 	printf("No payload found! :(\n");
 }
 
-int main( int argc, char **argv)
+int main( int argc, char **argv) {
 	consoleDemoInit();
 	scanKeys();
 	int keys = keysDown();
 
-	if(!fatInitDefault())
+	if(!fatInitDefault()) {
 		printf("FAT init failed!\n");
 		goto fail; // Bail out early
 	}
