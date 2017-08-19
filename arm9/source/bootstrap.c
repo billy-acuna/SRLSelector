@@ -36,7 +36,7 @@ int file_exists(char const* path) {
 
 void panic() {
 	const char* defnds = "/SRLSELECTOR/DEFAULT.NDS";
-	if(file_exists(defnds)
+	if(file_exists(defnds))
 		runNdsFile(defnds, 0, NULL);
 	printf("No payload found! :(\n");
 }
