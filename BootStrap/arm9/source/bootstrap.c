@@ -20,11 +20,9 @@
 
 #include <nds.h>
 #include <fat.h>
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <string.h>
-
 #include "nds_loader_arm9.h"
 
 int file_exists(char const* path) {
@@ -38,7 +36,7 @@ void panic() {
 	const char* defnds = "/SRLSELECTOR/DEFAULT.NDS";
 	if(file_exists(defnds))
 		runNdsFile(defnds, 0, NULL);
-	printf("No payload found! :(\n");
+	iprintf("No payload found! :(\n");
 }
 
 int main( int argc, char **argv) {
@@ -47,7 +45,7 @@ int main( int argc, char **argv) {
 	int keys = keysDown();
 
 	if(!fatInitDefault()) {
-		printf("FAT init failed!\n");
+		iprintf("FAT init failed!\n");
 		goto fail; // Bail out early
 	}
 	char buf[80] = {0};
@@ -77,12 +75,16 @@ int main( int argc, char **argv) {
 		payload = "X.NDS";
 	else if(keys & KEY_Y)
 		payload = "Y.NDS";
-	else
+	else {
+		// No keys held, execute the default or fail through
 		panic();
+		goto fail;
+	}
 	strcat(buf, payload);
-	if(!file_exists(buf))
-		panic();
-	runNdsFile(buf, 0, NULL);
+	if(file_exists(buf))
+		runNdsFile(buf, 0, NULL);
+	panic();
 fail:
+	powerOff(PM_BACKLIGHT_TOP);
 	while(1) swiWaitForVBlank();
 }
